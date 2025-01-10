@@ -31,29 +31,28 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
 
         [HttpGet]
-        public IActionResult GetAll(string status)
+        public IActionResult GetAll()
         {
 
             List<ApplicationUser> objUserList = context.applicationUsers.Include(u=>u.Company).ToList();
 
-            var UserRoles = context.UserRoles.ToList(); // UserRoles 
-            var Roles = context.Roles.ToList(); // name of roles 
-            foreach (var item in objUserList)
+            var userRoles = context.UserRoles.ToList(); // UserRoles 
+            var roles = context.Roles.ToList(); // name of roles 
+            foreach (var user in objUserList)
             {
-                
+                var roleId = userRoles.FirstOrDefault(u => u.UserId == user.Id).RoleId;
+                user.Role = roles.FirstOrDefault(u => u.Id == roleId).Name;
 
 
-                if(item.Company  == null)
+
+                if(user.Company  == null)
                 {
-                    item.Company = new() { Name = "" };
+                    user.Company = new Company() 
+                    {
+                        Name = "" 
+                    };
                 }
             }
-
-
-
-
-
-
 
 
             return Json(new { data = objUserList });
